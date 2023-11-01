@@ -18,55 +18,42 @@
         <input type="text" placeholder="Email" id="user_email">
         <input type="text" placeholder="Телефон" id="user_phone">
         <div id="error"></div>
-        <button id="order" style="background-color: gray;" disabled>Оформить</button>
+        <button id="order" style="background-color: gray;" disabled>Оформить</button> <!-- Изначально серая и отключена -->
     </form>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         let tg = window.Telegram.WebApp;
         let buy = document.getElementById("buy");
         let order = document.getElementById("order");
-        let nameInput = document.getElementById("user_name");
-        let emailInput = document.getElementById("user_email");
-        let phoneInput = document.getElementById("user_phone");
-
         tg.expand();
 
         buy.addEventListener("click", () => {
             document.getElementById("main").style.display = "none";
             document.getElementById("form").style.display = "block";
-            nameInput.value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
+            document.getElementById("user_name").value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
         });
 
         order.addEventListener("click", () => {
             document.getElementById("error").innerText = '';
-            let name = nameInput.value;
-            let email = emailInput.value;
-            let phone = phoneInput.value;
+            let name = document.getElementById("user_name").value;
+            let email = document.getElementById("user_email").value;
+            let phone = document.getElementById("user_phone").value;
 
+            // Валидация имени, почты и номера
             if (name.length < 5) {
                 document.getElementById("error").innerText = 'Ошибка в имени';
-                nameInput.style.border = "1px solid red";
                 return;
-            } else {
-                nameInput.style.border = "1px solid green";
             }
-
             if (email.length < 5) {
                 document.getElementById("error").innerText = 'Ошибка в email';
-                emailInput.style.border = "1px solid red";
                 return;
-            } else {
-                emailInput.style.border = "1px solid green";
             }
-
             if (phone.length < 5) {
                 document.getElementById("error").innerText = 'Ошибка в номере телефона';
-                phoneInput.style.border = "1px solid red";
                 return;
-            } else {
-                phoneInput.style.border = "1px solid green";
             }
 
+            // Если данные прошли валидацию, изменяем состояние кнопки "Оформить"
             order.style.backgroundColor = "green";
             order.innerText = "Заказ оформлен";
             order.disabled = true;
@@ -81,6 +68,7 @@
             tg.close();
         });
 
+        // Слушатель для изменения состояния кнопки при вводе данных
         let inputs = document.querySelectorAll('input');
         inputs.forEach((input) => {
             input.addEventListener('input', () => {
@@ -88,16 +76,17 @@
             });
         });
 
+        // Функция для валидации и изменения состояния кнопки "Оформить"
         function validateForm() {
-            let name = nameInput.value;
-            let email = emailInput.value;
-            let phone = phoneInput.value;
+            let name = document.getElementById("user_name").value;
+            let email = document.getElementById("user_email").value;
+            let phone = document.getElementById("user_phone").value;
 
             if (name.length >= 5 && email.length >= 5 && phone.length >= 5) {
                 order.style.backgroundColor = "green";
                 order.disabled = false;
             } else {
-                order.style.backgroundColor = "gray";
+                order.style.backgroundColor = "red";
                 order.disabled = true;
             }
         }
