@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <div id="main">
+        <h1>Онлайн магазин</h1>
+        <img src="https://avatars.mds.yandex.net/i?id=4c4198157bd55d6e1f366d3f9ac7f356eca37c54-9211281-images-thumbs&n=13">
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+        <button id="buy">Купить</button>
+    </div>
+    <form id="form" style="display: none;">
+        <h1>Оформление покупки</h1>
+        <input type="text" placeholder="Имя" id="user_name">
+        <input type="text" placeholder="Email" id="user_email">
+        <input type="text" placeholder="Телефон" id="user_phone">
+        <div id="error"></div>
+        <button id="order" style="background-color: red;" disabled>Оформить</button> <!-- Изначально серая и отключена -->
+    </form>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        let tg = window.Telegram.WebApp;
+        let buy = document.getElementById("buy");
+        let order = document.getElementById("order");
+        tg.expand();
+
+        buy.addEventListener("click", () => {
+            document.getElementById("main").style.display = "none";
+            document.getElementById("form").style.display = "block";
+            document.getElementById("user_name").value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
+        });
+
+        order.addEventListener("click", () => {
+            document.getElementById("error").innerText = '';
+            let name = document.getElementById("user_name").value;
+            let email = document.getElementById("user_email").value;
+            let phone = document.getElementById("user_phone").value;
+
+            // Валидация имени, почты и номера
+            if (name.length < 5) {
+                document.getElementById("error").innerText = 'Ошибка в имени';
+                return;
+            }
+            if (email.length < 5) {
+                document.getElementById("error").innerText = 'Ошибка в email';
+                return;
+            }
+            if (phone.length < 5) {
+                document.getElementById("error").innerText = 'Ошибка в номере телефона';
+                return;
+            }
+
+            // Если данные прошли валидацию, изменяем состояние кнопки "Оформить"
+            order.style.backgroundColor = "green";
+            order.innerText = "Заказ оформлен";
+            order.disabled = true;
+
+            let data = {
+                name: name,
+                email: email,
+                phone: phone
+            }
+            tg.sendData(JSON.stringify(data));
+
+            tg.close();
+        });
+
+        // Слушатель для изменения состояния кнопки при вводе данных
+        let inputs = document.querySelectorAll('input');
+        inputs.forEach((input) => {
+            input.addEventListener('input', () => {
+                validateForm();
+            });
+        });
+
+        // Функция для валидации и изменения состояния кнопки "Оформить"
+        function validateForm() {
+            let name = document.getElementById("user_name").value;
+            let email = document.getElementById("user_email").value;
+            let phone = document.getElementById("user_phone").value;
+
+            if (name.length >= 5 && email.length >= 5 && phone.length >= 5) {
+                order.style.backgroundColor = "green";
+                order.disabled = false;
+            } else {
+                order.style.backgroundColor = "red";
+                order.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>
