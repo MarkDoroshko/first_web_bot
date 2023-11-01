@@ -45,29 +45,26 @@
 
             if (name.length < 5) {
                 document.getElementById("error").innerText = 'Ошибка в имени';
-                nameInput.classList.add("InvalidInput");
+                nameInput.style.border = "1px solid red";
                 return;
             } else {
-                nameInput.classList.remove("InvalidInput");
-                nameInput.classList.add("ValidInput");
+                nameInput.style.border = "1px solid green";
             }
 
             if (email.length < 5) {
                 document.getElementById("error").innerText = 'Ошибка в email';
-                emailInput.classList.add("InvalidInput");
+                emailInput.style.border = "1px solid red";
                 return;
             } else {
-                emailInput.classList.remove("InvalidInput");
-                emailInput.classList.add("ValidInput");
+                emailInput.style.border = "1px solid green";
             }
 
             if (phone.length < 5) {
                 document.getElementById("error").innerText = 'Ошибка в номере телефона';
-                phoneInput.classList.add("InvalidInput");
+                phoneInput.style.border = "1px solid red";
                 return;
             } else {
-                phoneInput.classList.remove("InvalidInput");
-                phoneInput.classList.add("ValidInput");
+                phoneInput.style.border = "1px solid green";
             }
 
             order.style.backgroundColor = "green";
