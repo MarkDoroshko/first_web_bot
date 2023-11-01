@@ -10,7 +10,7 @@
         <h1>Онлайн магазин</h1>
         <img src="https://avatars.mds.yandex.net/i?id=4c4198157bd55d6e1f366d3f9ac7f356eca37c54-9211281-images-thumbs&n=13">
         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
-        <button id="buy" class="MainButton">Купить</button>
+        <button id="buy">Купить</button>
     </div>
     <form id="form" style="display: none;">
         <h1>Оформление покупки</h1>
@@ -18,42 +18,58 @@
         <input type="text" placeholder="Email" id="user_email">
         <input type="text" placeholder="Телефон" id="user_phone">
         <div id="error"></div>
-        <button id="order" style="background-color: gray;" disabled>Оформить</button> <!-- Изначально серая и отключена -->
+        <button id="order" style="background-color: gray;" disabled>Оформить</button>
     </form>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         let tg = window.Telegram.WebApp;
         let buy = document.getElementById("buy");
         let order = document.getElementById("order");
+        let nameInput = document.getElementById("user_name");
+        let emailInput = document.getElementById("user_email");
+        let phoneInput = document.getElementById("user_phone");
+
         tg.expand();
 
         buy.addEventListener("click", () => {
             document.getElementById("main").style.display = "none";
             document.getElementById("form").style.display = "block";
-            document.getElementById("user_name").value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
+            nameInput.value = tg.initDataUnsafe.user.first_name + " " + tg.initDataUnsafe.user.last_name;
         });
 
         order.addEventListener("click", () => {
             document.getElementById("error").innerText = '';
-            let name = document.getElementById("user_name").value;
-            let email = document.getElementById("user_email").value;
-            let phone = document.getElementById("user_phone").value;
+            let name = nameInput.value;
+            let email = emailInput.value;
+            let phone = phoneInput.value;
 
-            // Валидация имени, почты и номера
             if (name.length < 5) {
                 document.getElementById("error").innerText = 'Ошибка в имени';
+                nameInput.classList.add("InvalidInput");
                 return;
-            }
-            if (email.length < 5) {
-                document.getElementById("error").innerText = 'Ошибка в email';
-                return;
-            }
-            if (phone.length < 5) {
-                document.getElementById("error").innerText = 'Ошибка в номере телефона';
-                return;
+            } else {
+                nameInput.classList.remove("InvalidInput");
+                nameInput.classList.add("ValidInput");
             }
 
-            // Если данные прошли валидацию, изменяем состояние кнопки "Оформить"
+            if (email.length < 5) {
+                document.getElementById("error").innerText = 'Ошибка в email';
+                emailInput.classList.add("InvalidInput");
+                return;
+            } else {
+                emailInput.classList.remove("InvalidInput");
+                emailInput.classList.add("ValidInput");
+            }
+
+            if (phone.length < 5) {
+                document.getElementById("error").innerText = 'Ошибка в номере телефона';
+                phoneInput.classList.add("InvalidInput");
+                return;
+            } else {
+                phoneInput.classList.remove("InvalidInput");
+                phoneInput.classList.add("ValidInput");
+            }
+
             order.style.backgroundColor = "green";
             order.innerText = "Заказ оформлен";
             order.disabled = true;
@@ -68,7 +84,6 @@
             tg.close();
         });
 
-        // Слушатель для изменения состояния кнопки при вводе данных
         let inputs = document.querySelectorAll('input');
         inputs.forEach((input) => {
             input.addEventListener('input', () => {
@@ -76,11 +91,10 @@
             });
         });
 
-        // Функция для валидации и изменения состояния кнопки "Оформить"
         function validateForm() {
-            let name = document.getElementById("user_name").value;
-            let email = document.getElementById("user_email").value;
-            let phone = document.getElementById("user_phone").value;
+            let name = nameInput.value;
+            let email = emailInput.value;
+            let phone = phoneInput.value;
 
             if (name.length >= 5 && email.length >= 5 && phone.length >= 5) {
                 order.style.backgroundColor = "green";
